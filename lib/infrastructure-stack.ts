@@ -26,11 +26,12 @@ export class InfrastructureStack extends cdk.Stack {
   }
 
   createLambdaForOperation(operation: String): Function {
+    const camel_case_operation = operation.charAt(0).toUpperCase() + operation.slice(1)
 
     const props = {
       runtime: Runtime.JAVA_8_CORRETTO,
-      handler: "com.giansanz.rest.restapi." + operation + "LambdaHandler::handleRequest",
-      code: Code.fromAsset(join("D:","Projects","rest","rest-api")),
+      handler: "com.giansanz.rest.handlers." + camel_case_operation + "Handler",
+      code: Code.fromAsset(join("D:","Projects","rest","rest-api", "target", "rest-api-0.1.jar")),
       role: this.createLambdaExecutionRole(operation),
       profiling: false,
     } as FunctionProps
@@ -42,7 +43,7 @@ export class InfrastructureStack extends cdk.Stack {
     const props = {
       assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
       managedPolicies: [
-        ManagedPolicy.fromAwsManagedPolicyName("AWSLambdaBasicExecutionRole")
+        ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
       ]
     } as RoleProps
 
