@@ -1,4 +1,4 @@
-import { LambdaIntegration, LambdaIntegrationOptions, RestApi, RestApiProps } from '@aws-cdk/aws-apigateway';
+import { LambdaIntegration, LambdaIntegrationOptions, MethodLoggingLevel, RestApi, RestApiProps } from '@aws-cdk/aws-apigateway';
 import { ManagedPolicy, Role, RoleProps, ServicePrincipal } from '@aws-cdk/aws-iam';
 import { Code, Function, FunctionProps, Runtime } from '@aws-cdk/aws-lambda';
 import * as cdk from '@aws-cdk/core';
@@ -52,7 +52,11 @@ export class InfrastructureStack extends cdk.Stack {
 
   createBaseRestApi() {
     const props = {
-      restApiName: "rest-api"
+      restApiName: "rest-api",
+      deployOptions: {
+        loggingLevel: MethodLoggingLevel.INFO,
+        dataTraceEnabled: true
+      }
     } as RestApiProps
 
     return new RestApi(this, "rest-api", props)
